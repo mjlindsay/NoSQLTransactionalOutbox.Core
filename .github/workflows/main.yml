@@ -37,4 +37,4 @@ jobs:
         run: dotnet nuget add source --username mjlindsay --password ${{ secrets.NUGET_PACKAGE_KEY }} --store-password-in-clear-text --name GPR "https://nuget.pkg.github.com/mjlindsay/index.json" 
       
       - name: Push Generated Package
-        run: dotnet nuget push NoSqlTransactionalOutbox.Core/out/*.nupkg --source "GPR" --skip-duplicate
+        run: dotnet nuget push out/*.nupkg --source "GPR" --skip-duplicate

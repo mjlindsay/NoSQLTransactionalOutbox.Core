@@ -1,0 +1,28 @@
+name: Publish to NuGet
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: windows-latest
+    name: Update NuGet
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@main
+        
+      - name: Build Solution and Generate Package
+        run: |
+          cd NoSQLTransactionalOutbox.Core
+          dotnet pack -c Release -o out
+          
+      - name: Install Nuget
+        uses: warrenbuckley/Setup-Nuget@v1
+        
+      - name: Add Private GitHub Repo to NuGet
+        run: nuget sources add -name "GPR" -Source https://nuget.pkg.github.com/mjlindsay/index.json -Username mjlindsay -Password ${{secrets.GITHUB_TOKEN}}
+      
+      - name: Push Generated Package
+        run: nuget push .\NoSqlTransactionalOutbox.Core\NoSQLTransactionalOutbox.Core\out\*.nupkg -Source "GPR" -SkipDuplicate

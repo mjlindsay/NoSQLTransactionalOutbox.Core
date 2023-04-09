@@ -25,4 +25,4 @@ jobs:
         run: nuget sources add -name "GPR" -Source https://nuget.pkg.github.com/mjlindsay/index.json -Username mjlindsay -Password ${{secrets.GITHUB_TOKEN}}
       
       - name: Push Generated Package
-        run: nuget push .\NoSqlTransactionalOutbox.Core\NoSQLTransactionalOutbox.Core\out\*.nupkg -Source "GPR" -SkipDuplicate
+        run: nuget push .\NoSqlTransactionalOutbox.Core\out\*.nupkg -Source "GPR" -SkipDuplicate

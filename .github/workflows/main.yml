@@ -2,29 +2,42 @@ name: Publish to NuGet
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]"
 
 jobs:
-  build:
+  build-core:
     runs-on: windows-latest
     name: Update NuGet
     environment: Dev
+    
+    # Set specific environment variables
+    env:
+      Version: ${GITHUB_REF/refs\/tags\/v/}
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@main
-        
-      - name: Build Solution and Generate Package
-        run: |
-          cd NoSQLTransactionalOutbox.Core
-          dotnet pack -c Release -o out
+
+      - name: Set Version Variable from tags
+        run: echo ""
+      
+      - name: Navigate to Solution
+        run: cd NoSQLTransactionalOutbox.Core
+
+      - name: Build
+        run: dotnet build --configuration Release /p:Version=${VERSION}
+      
+      # - name: Test
+      #   run: dotnet test --configuration Release /p:Version=${VERSION}
+
+      - name: Generate Package
+        run: dotnet pack -c Release -o out /p:Version=${VERSION}
           
-      - name: Install Nuget
-        uses: nuget/setup-nuget@v1
+      # - name: Install Nuget
+      #   uses: nuget/setup-nuget@v1
         
       - name: Add Private GitHub Repo to NuGet
-
-        # run: nuget sources add -name "GPR" -Source https://nuget.pkg.github.com/mjlindsay/index.json -Username mjlindsay -Password ${{secrets.GITHUB_TOKEN}}
         run: dotnet nuget add source --username mjlindsay --password ${{ secrets.NUGET_PACKAGE_KEY }} --store-password-in-clear-text --name GPR "https://nuget.pkg.github.com/mjlindsay/index.json" 
       
       - name: Push Generated Package

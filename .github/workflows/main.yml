@@ -20,19 +20,19 @@ jobs:
         uses: actions/checkout@main
 
       - name: Set Version Variable from tags
-        run: echo ""
+        run: echo "${Version}"
       
       - name: Navigate to Solution
         run: cd NoSQLTransactionalOutbox.Core
 
       - name: Build
-        run: dotnet build --configuration Release /p:Version=${VERSION}
+        run: dotnet build --configuration Release /p:Version=${Version}
       
       # - name: Test
       #   run: dotnet test --configuration Release /p:Version=${VERSION}
 
       - name: Generate Package
-        run: dotnet pack -c Release -o out /p:Version=${VERSION}
+        run: dotnet pack -c Release -o out /p:Version=${Version}
           
       # - name: Install Nuget
       #   uses: nuget/setup-nuget@v1

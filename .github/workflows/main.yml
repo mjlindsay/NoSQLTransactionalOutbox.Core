@@ -7,32 +7,28 @@ on:
 
 jobs:
   build-core:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     name: Update NuGet
     environment: Dev
-    
-    # Set specific environment variables
-    env:
-      Version: ${GITHUB_REF/refs\/tags\/v/}
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@main
-
-      - name: Set Version Variable from tags
-        run: echo "${Version}"
       
       - name: Navigate to Solution
         run: cd NoSQLTransactionalOutbox.Core
 
+      - name: Set VERSION variable from tag
+        run: echo "VERSION=${GITHUB_REF/refs\/tags\/v/}" >> $GITHUB_ENV
+
       - name: Build
-        run: dotnet build --configuration Release /p:Version=${Version}
+        run: dotnet build --configuration Release /p:Version=${VERSION}
       
       # - name: Test
       #   run: dotnet test --configuration Release /p:Version=${VERSION}
 
       - name: Generate Package
-        run: dotnet pack -c Release -o out /p:Version=${Version}
+        run: dotnet pack -c Release -o out /p:Version=${VERSION}
           
       # - name: Install Nuget
       #   uses: nuget/setup-nuget@v1
